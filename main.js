@@ -1,25 +1,27 @@
 // Khởi tạo biến toàn cục
 let soLanDanhGia = 0;
 let tongDiem = 0;
-
-let danhGiaList = []
+let danhGiaList = JSON.parse(localStorage.getItem('danhGiaList')) || [];
 
 function hienThiDanhGia() {
-    let danhGiaHTML = ``;
-    danhGiaList = JSON.parse(localStorage.getItem('danhGiaList'))
-    for (let i = 0; i < danhGiaList.length; i++) {
-        danhGiaHTML += `
+    let danhGiaHTML = '';
+    if (danhGiaList.length === 0) {
+        danhGiaHTML = `
         <tr>
-            <th scope="row">${i + 1}</th>
-            <td>${danhGiaList[i].rating}</td>
-            <td>${danhGiaList[i].feedback}</td>
-        </tr>
-        `
+            <td colspan="3" class="text-center">Chưa có đánh giá nào.</td>
+        </tr>`;
+    } else {
+        for (let i = 0; i < danhGiaList.length; i++) {
+            danhGiaHTML += `
+            <tr>
+                <th class="id2" scope="row">${i + 1}</th>
+                <td class="rating2">${danhGiaList[i].rating} <i class="fas fa-star"></i></td>
+                <td>${danhGiaList[i].feedback}</td>
+            </tr>`;
+        }
     }
     document.querySelector('tbody').innerHTML = danhGiaHTML;
 }
-hienThiDanhGia();
-
 
 // Xử lý hiển thị phần ý kiến cải thiện
 document.querySelectorAll('input[name="rating"]').forEach(input => {
@@ -46,14 +48,12 @@ function hienThiDiemTrungBinh(event) {
     const improveInput = document.getElementById("improveInput").value;
     const feedback = document.getElementById("feedback");
 
-    // Lấy lại khi tải trang
-    tongDiem = parseInt(localStorage.getItem('tongDiem')) || 0;
-    soLanDanhGia = parseInt(localStorage.getItem('soLanDanhGia')) || 0;
-    // Tính điểm đánh giá
+    // Cập nhật điểm và số lần đánh giá
     soLanDanhGia++;
     tongDiem += rating;
-    const danhGia = (tongDiem / soLanDanhGia).toFixed(1);
-    // Lưu
+    const danhGia = soLanDanhGia > 0 ? (tongDiem / soLanDanhGia).toFixed(1) : 0;
+
+    // Lưu vào localStorage
     localStorage.setItem('tongDiem', tongDiem);
     localStorage.setItem('soLanDanhGia', soLanDanhGia);
 
@@ -83,33 +83,40 @@ function hienThiDiemTrungBinh(event) {
 
     // Hiển thị thông báo
     feedback.innerHTML = `<div class="alert alert-success">${message}</div>`;
-    diemTB.innerHTML = `<div>${danhGia} trên 5 <span class="stars">★★★★★</span></div>`
+    document.getElementById("diemTB").innerHTML = `<div>${danhGia} trên 5 <span class="stars">★★★★★</span></div>`;
+
     // Reset form
     document.getElementById("ratingForm").reset();
     document.getElementById("improveSection").style.display = "none";
 
-    // Ghi log
-    console.log(`Tổng điểm: ${tongDiem}, Số lần đánh giá: ${soLanDanhGia}, Điểm trung bình: ${danhGia}`);
+    // Thêm đánh giá vào danh sách
     danhGiaList.push({
         rating: rating,
-        feedback: improveInput || "không có ý kiến"
-    })
+        feedback: improveInput || "Không có ý kiến"
+    });
+
     // Lưu danh sách đánh giá vào localStorage
     localStorage.setItem('danhGiaList', JSON.stringify(danhGiaList));
-    hienThiDanhGia();
-};
 
+    // Cập nhật hiển thị danh sách đánh giá
+    hienThiDanhGia();
+
+    // Ghi log
+    console.log(`Tổng điểm: ${tongDiem}, Số lần đánh giá: ${soLanDanhGia}, Điểm trung bình: ${danhGia}`);
+}
+
+// Xử lý khi tải trang
 window.onload = function () {
-    // Lấy lại khi tải trang
+    // Lấy dữ liệu từ localStorage
     tongDiem = parseInt(localStorage.getItem('tongDiem')) || 0;
     soLanDanhGia = parseInt(localStorage.getItem('soLanDanhGia')) || 0;
-    const danhGia = (tongDiem / soLanDanhGia).toFixed(1);
-    diemTB.innerHTML = `<div>${danhGia} trên 5 <span class="stars">★★★★★</span></div>`
+    const danhGia = soLanDanhGia > 0 ? (tongDiem / soLanDanhGia).toFixed(1) : 0;
+    document.getElementById("diemTB").innerHTML = `<div>${danhGia} trên 5 <span class="stars">★★★★★</span></div>`;
+    hienThiDanhGia();
 }
 
 // Xử lý nút "Tất Cả"
 document.querySelector('.filter-btn').addEventListener('click', function () {
+    hienThiDanhGia();
     alert('Hiển thị tất cả đánh giá!');
-
 });
-

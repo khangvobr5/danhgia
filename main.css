@@ -27,9 +27,7 @@ header h2 {
     margin-top: 1rem;
 }
 
-.fa-star {
-    padding: 1rem;
-}
+
 
 .rating {
     display: flex;
@@ -124,6 +122,15 @@ header h2 {
     border-radius: 5px;
 }
 
+tbody>tr>.id2  {
+    width: 50px;
+}
+
+tbody>tr>.rating2{
+    width: 100px;
+}
+
+
 /* Media Queries cho responsive */
 @media (max-width: 768px) {
     header h1 {
@@ -138,9 +145,6 @@ header h2 {
         font-size: 1.5rem;
     }
 
-    .fa-star {
-        padding: 0.5rem;
-    }
 
     .btn-primary {
         font-size: 0.9rem;
@@ -179,10 +183,6 @@ header h2 {
 
     .rating label {
         font-size: 1.2rem;
-    }
-
-    .fa-star {
-        padding: 0.3rem;
     }
 
     .container {
