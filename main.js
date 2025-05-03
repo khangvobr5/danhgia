@@ -28,7 +28,7 @@ document.querySelectorAll('input[name="rating"]').forEach(input => {
     input.addEventListener("change", function () {
         const rating = parseInt(this.value);
         const improveSection = document.getElementById("improveSection");
-        improveSection.style.display = rating < 5 ? "block" : "none";
+        improveSection.style.display = rating < 6 ? "block" : "none";
     });
 });
 
